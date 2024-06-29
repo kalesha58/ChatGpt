@@ -1,10 +1,11 @@
 import { StyleSheet, Text, View } from 'react-native'
 import React from 'react'
+import AnimatedIntro from '@/components/AnimatedIntro'
 
 export default function index() {
   return (
     <View>
-      <Text>index kk</Text>
+     <AnimatedIntro/>
     </View>
   )
 }
