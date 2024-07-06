@@ -25,3 +25,7 @@ multiDexEnabled true
 
 
    rnfs
+
+
+   TODO:-
+   Check login signin signout (with splash screen)
