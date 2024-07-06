@@ -1,12 +1,86 @@
-import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native'
-import React from 'react'
+import { View, Text, StyleSheet, Image, TouchableOpacity, Keyboard, useWindowDimensions, TextInput } from 'react-native'
+import React, { useEffect, useState } from 'react'
 import Colors from '@/constants/Colors';
 import { Drawer } from 'expo-router/drawer'
-import { Link } from 'expo-router';
-import { Ionicons } from '@expo/vector-icons';
-const Layout = () => {
+import { Link, useNavigation, useRouter } from 'expo-router';
+import { FontAwesome6, Ionicons } from '@expo/vector-icons';
+import { DrawerActions } from '@react-navigation/native';
+import { DrawerContentScrollView, DrawerItemList, useDrawerStatus } from '@react-navigation/drawer';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { Chat } from '@/utils/interface';
+
+export const CustomDrawerContent = (props: any) => {
+  const { bottom, top } = useSafeAreaInsets();
+  const isDrawerOpen = useDrawerStatus() === 'open';
+  const [history, setHistory] = useState<Chat[]>([]);
+  const router = useRouter();
+
   return (
-    <Drawer>
+    <View style={{ flex: 1, marginTop: top }}>
+      <View style={{ paddingBottom: 1 }}>
+
+        <View style={styles.searchSection}>
+          <Ionicons style={styles.searchIcon} name="search" size={20} color={Colors.greyLight} />
+          <TextInput
+            style={styles.input}
+            placeholder="Search"
+            underlineColorAndroid="transparent"
+          />
+        </View>
+      </View>
+      <DrawerContentScrollView contentContainerStyle={{ paddingBottom: 0 }} {...props}>
+        <DrawerItemList {...props} />
+      </DrawerContentScrollView>
+
+      <View
+        style={{
+          padding: 16,
+          paddingBottom: 10 + bottom,
+          backgroundColor: Colors.light,
+        }}>
+        <Link href="/(auth)/(modal)/settings" asChild>
+          <TouchableOpacity style={styles.footer}>
+            <Image
+              source={{ uri: 'https://avatars.githubusercontent.com/u/105914652?v=4&size=64' }}
+              style={styles.avatar}
+            />
+            <Text style={styles.userName}>Baig Kalesha</Text>
+            <Ionicons name="ellipsis-horizontal" size={24} color={Colors.greyLight} />
+          </TouchableOpacity>
+        </Link>
+      </View>
+    </View>
+  )
+
+}
+const Layout = () => {
+  const navigation = useNavigation();
+  const dimensions = useWindowDimensions();
+  return (
+
+    <Drawer
+      drawerContent={CustomDrawerContent}
+      screenOptions={{
+        headerTitleAlign: 'center',
+        headerLeft: () => (
+          <TouchableOpacity
+            onPress={() => navigation.dispatch(DrawerActions.toggleDrawer)}
+            style={{ marginLeft: 16 }}>
+            <FontAwesome6 name="grip-lines" size={20} color={Colors.grey} />
+          </TouchableOpacity>
+        ),
+        headerStyle: {
+          backgroundColor: Colors.light,
+        },
+        headerShadowVisible: false,
+        drawerActiveBackgroundColor: Colors.selected,
+        drawerActiveTintColor: '#000',
+        drawerInactiveTintColor: '#000',
+        overlayColor: 'rgba(0, 0, 0, 0.2)',
+        drawerItemStyle: { borderRadius: 12 },
+        drawerLabelStyle: { marginLeft: -20 },
+        drawerStyle: { width: dimensions.width * 0.86 },
+      }}>
       <Drawer.Screen
         name="(chat)/new"
         getId={() => Math.random().toString()}
@@ -33,6 +107,7 @@ const Layout = () => {
       />
       <Drawer.Screen
         name="dalle"
+
         options={{
           title: 'Dall·E',
           drawerIcon: () => (
@@ -41,16 +116,16 @@ const Layout = () => {
             </View>
           ),
         }}
-        // listeners={{
-        //   drawerItemPress: (e) => {
-        //     e.preventDefault();
-        //     if (!user.dalle) {
-        //       router.navigate('/(auth)/(modal)/purchase');
-        //     } else {
-        //       router.navigate('/(auth)/dalle');
-        //     }
-        //   },
-        // }}
+      // listeners={{
+      //   drawerItemPress: (e) => {
+      //     e.preventDefault();
+      //     if (!user.dalle) {
+      //       router.navigate('/(auth)/(modal)/purchase');
+      //     } else {
+      //       router.navigate('/(auth)/dalle');
+      //     }
+      //   },
+      // }}
       />
       <Drawer.Screen
         name="explore"
